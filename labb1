@@ -2,12 +2,19 @@
 <html>
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	
+	<!-- iOS Safari-grejer -->
+	<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="viewport" content="minimal-ui"/>
 	<link rel="apple-touch-icon" href="images/icon.png" />
+	<link rel="apple-touch-startup-image" href="images/startup.png">
+	
 	<link rel="stylesheet" type="text/css" href="lab1.css">
     <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAuPXoE62pzeN4VDQxJHL0pmM5l73M5--g&sensor=false">
     </script>
+	
     <script type="text/javascript">
 	var map;
 	var stockholm = new google.maps.LatLng(59.32522, 18.07002);
@@ -16,11 +23,6 @@
 	var marker_draggable;
 	var marker_nondraggable;
 
-	/**
-	 * The HomeControl adds a control to the map that simply
-	 * returns the user to Chicago. This constructor takes
-	 * the control DIV as an argument.
-	 */
 	function PanningControl(controlDiv, map){		
 			
 		var left = document.createElement('div');
@@ -95,15 +97,9 @@
 		controlDiv.appendChild(zoomout);
     	}
 
-	function HomeControl(controlDiv, map) {
-
-	  // Set CSS styles for the DIV containing the control
-	  // Setting padding to 5 px will offset the control
-	  // from the edge of the map.		
+	function HomeControl(controlDiv, map) {	
 	  
-	  controlDiv.style.padding = '5px';
-
-	  // Set CSS for the control border.	  
+	  controlDiv.style.padding = '5px';  
 		
 	  var controlUI = document.createElement('div');
 	  controlUI.style.backgroundColor = 'white';
@@ -114,7 +110,6 @@
 	  controlUI.title = 'Go to home';
 	  controlDiv.appendChild(controlUI);
 
-	  // Set CSS for the control interior.
 	  var controlText = document.createElement('div');
 	  controlText.style.fontFamily = 'Arial,sans-serif';
 	  controlText.style.fontSize = '12px';
@@ -123,7 +118,6 @@
 	  controlText.innerHTML = '<strong>Go home</strong>';
 	  controlUI.appendChild(controlText);
 
-	  // Setup the click event listeners: simply set the map to Chicago.
 	  google.maps.event.addDomListener(controlUI, 'click', function() {
 	    map.setCenter(stockholm)
 	  });
@@ -163,8 +157,6 @@
 	  }
 	  map = new google.maps.Map(mapDiv, mapOptions);
 
-	  // Create the DIV to hold the control and call the homeControl() constructor
-	  // passing in this DIV.
 	  var homeControlDiv = document.createElement('div');
 	  var zoomDiv = document.createElement('div');
 	  var panningDiv = document.createElement('div');
@@ -196,8 +188,6 @@
 	
 	  google.maps.event.addListener(marker_draggable, 'click', toggleBounce);
 	  google.maps.event.addListener(marker_nondraggable, 'click', toggleBounce2);
-
-
 
 	}
 	  
