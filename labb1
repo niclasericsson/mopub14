@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<link rel="apple-touch-icon" href="images/icon.png" />
+	<link rel="stylesheet" type="text/css" href="lab1.css">
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAuPXoE62pzeN4VDQxJHL0pmM5l73M5--g&sensor=false">
+    </script>
+    <script type="text/javascript">
+	var map;
+	var stockholm = new google.maps.LatLng(59.32522, 18.07002);
+	var kth = new google.maps.LatLng(59.347825, 18.0677002);
+	var hornstull = new google.maps.LatLng(59.3194272, 18.0505744);
+	var marker_draggable;
+	var marker_nondraggable;
+
+	/**
+	 * The HomeControl adds a control to the map that simply
+	 * returns the user to Chicago. This constructor takes
+	 * the control DIV as an argument.
+	 */
+	function PanningControl(controlDiv, map){		
+			
+		var left = document.createElement('div');
+		    left.className = 'left';
+			var left_img = document.createElement('img');
+				left_img.setAttribute("src","images/left.png")
+				left_img.setAttribute("id","leftImage")
+				left.appendChild(left_img);
+			
+		var right = document.createElement('div');
+		    right.className = 'right';
+		    var right_img = document.createElement('img');
+				right_img.setAttribute("src","images/right.png")
+				right_img.setAttribute("id","rightImage")
+				right.appendChild(right_img);
+							
+		var up = document.createElement('div');
+			up.className = 'up';
+			var up_img = document.createElement('img');
+				up_img.setAttribute("src","images/up.png")
+				up_img.setAttribute("id","upImage")
+				up.appendChild(up_img);
+							
+		var down = document.createElement('div');
+			down.className = 'down';
+			var down_img = document.createElement('img');
+				down_img.setAttribute("src","images/down.png")
+				down_img.setAttribute("id","downImage")
+				down.appendChild(down_img);
+		
+		google.maps.event.addDomListener(left, 'click', function() {
+		   	map.panBy(-100,0); 
+		});	
+		google.maps.event.addDomListener(right, 'click', function() {
+		   	map.panBy(100,0); 
+		});
+		google.maps.event.addDomListener(up, 'click', function() {
+		   	map.panBy(0,-100); 
+		});
+		google.maps.event.addDomListener(down, 'click', function() {
+		   	map.panBy(0,100); 
+		});	
+		
+		controlDiv.appendChild(left);
+		controlDiv.appendChild(right);
+		controlDiv.appendChild(up);
+		controlDiv.appendChild(down);
+	    }
+	
+	function ZoomControl(controlDiv, map) {		
+		
+		var zoomout = document.createElement('div');
+		  zoomout.className = 'zoomout';
+		  zoomout.innerHTML = '<strong>ZOOM OUT</strong>';
+
+		  var zoomin = document.createElement('div');
+		  zoomin.className = 'zoomin';
+		  zoomin.innerHTML = '<strong>ZOOM IN</strong>';
+	
+		google.maps.event.addDomListener(zoomout, 'click', function() {
+	   		var currentZoomLevel = map.getZoom();
+	   		if(currentZoomLevel != 0){
+	     		map.setZoom(currentZoomLevel - 1);}     
+	  		});
+
+	   	google.maps.event.addDomListener(zoomin, 'click', function() {
+	   		var currentZoomLevel = map.getZoom();
+	   		if(currentZoomLevel != 21){
+	     		map.setZoom(currentZoomLevel + 1);}
+	  		});
+		controlDiv.appendChild(zoomin);
+		controlDiv.appendChild(zoomout);
+    	}
+
+	function HomeControl(controlDiv, map) {
+
+	  // Set CSS styles for the DIV containing the control
+	  // Setting padding to 5 px will offset the control
+	  // from the edge of the map.		
+	  
+	  controlDiv.style.padding = '5px';
+
+	  // Set CSS for the control border.	  
+		
+	  var controlUI = document.createElement('div');
+	  controlUI.style.backgroundColor = 'white';
+	  controlUI.style.opacity = '0.9';
+	  controlUI.style.cursor = 'pointer';
+	  controlUI.style.textAlign = 'center';
+	  controlUI.style.margin = '8px';
+	  controlUI.title = 'Go to home';
+	  controlDiv.appendChild(controlUI);
+
+	  // Set CSS for the control interior.
+	  var controlText = document.createElement('div');
+	  controlText.style.fontFamily = 'Arial,sans-serif';
+	  controlText.style.fontSize = '12px';
+	  controlText.style.paddingLeft = '4px';
+	  controlText.style.paddingRight = '4px';
+	  controlText.innerHTML = '<strong>Go home</strong>';
+	  controlUI.appendChild(controlText);
+
+	  // Setup the click event listeners: simply set the map to Chicago.
+	  google.maps.event.addDomListener(controlUI, 'click', function() {
+	    map.setCenter(stockholm)
+	  });
+	}
+	
+	function toggleBounce() {
+
+	  	if (marker_draggable.getAnimation() != null) {
+	    marker_draggable.setAnimation(null);
+	  	}
+	
+		else {
+	    marker_draggable.setAnimation(google.maps.Animation.BOUNCE);
+	  	}
+	}
+	
+	function toggleBounce2() {
+
+	  	if (marker_nondraggable.getAnimation() != null) {
+	    marker_nondraggable.setAnimation(null);
+	  	}
+	
+		else {
+	    marker_nondraggable.setAnimation(google.maps.Animation.BOUNCE);
+	  	}
+	}
+
+
+	function initialize() {
+	  var mapDiv = document.getElementById('map-canvas');
+	  var mapOptions = {
+	    zoom: 12,
+	    center: stockholm,
+		mapTypeId: google.maps.MapTypeId.HYBRID,
+		panControl: false,
+		zoomControl: false
+	  }
+	  map = new google.maps.Map(mapDiv, mapOptions);
+
+	  // Create the DIV to hold the control and call the homeControl() constructor
+	  // passing in this DIV.
+	  var homeControlDiv = document.createElement('div');
+	  var zoomDiv = document.createElement('div');
+	  var panningDiv = document.createElement('div');
+	  var homeControl = new HomeControl(homeControlDiv, map);
+	  var zoomControl = new ZoomControl(zoomDiv, map);
+	  var panningControl = new PanningControl(panningDiv, map);
+
+	  homeControlDiv.index = 1;
+	  zoomDiv.index = 1;
+	  map.controls[google.maps.ControlPosition.TOP_LEFT].push(homeControlDiv);
+	  map.controls[google.maps.ControlPosition.LEFT_CENTER].push(zoomDiv);
+	  map.controls[google.maps.ControlPosition.LEFT_CENTER].push(panningDiv);
+      map.setTilt(0);
+
+
+	marker_draggable = new google.maps.Marker({
+	    map:map,
+	    draggable:true,
+	    animation: google.maps.Animation.DROP,
+	    position: kth
+	  });
+	
+	marker_nondraggable = new google.maps.Marker({
+	    map:map,
+	    draggable:false,
+	    animation: google.maps.Animation.DROP,
+	    position: hornstull
+	  });
+	
+	  google.maps.event.addListener(marker_draggable, 'click', toggleBounce);
+	  google.maps.event.addListener(marker_nondraggable, 'click', toggleBounce2);
+
+
+
+	}
+	  
+      google.maps.event.addDomListener(window, 'load', initialize);
+
+	  
+	
+    </script>
+  </head>
+  <body>
+    <div id="map-canvas"/>    
+  </body>
+</html>
+
